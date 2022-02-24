@@ -2,7 +2,10 @@ package org.javaparser.examples.chapter5;
 
 import com.github.javaparser.StaticJavaParser;
 import com.github.javaparser.ast.CompilationUnit;
+import com.github.javaparser.ast.NodeList;
 import com.github.javaparser.ast.body.FieldDeclaration;
+import com.github.javaparser.ast.type.ClassOrInterfaceType;
+import com.github.javaparser.ast.type.Type;
 import com.github.javaparser.symbolsolver.JavaSymbolSolver;
 import com.github.javaparser.symbolsolver.javaparser.Navigator;
 import com.github.javaparser.symbolsolver.model.resolution.TypeSolver;
@@ -11,6 +14,7 @@ import com.github.javaparser.symbolsolver.resolution.typesolvers.JavaParserTypeS
 import com.github.javaparser.symbolsolver.resolution.typesolvers.ReflectionTypeSolver;
 
 import java.io.File;
+import java.util.Optional;
 
 public class ResolveTypeInContext {
 
@@ -20,7 +24,7 @@ public class ResolveTypeInContext {
     public static void main(String[] args) throws Exception {
         TypeSolver reflectionTypeSolver = new ReflectionTypeSolver();
         TypeSolver javaParserTypeSolver = new JavaParserTypeSolver(new File(SRC_PATH));
-        reflectionTypeSolver.setParent(reflectionTypeSolver);
+//        reflectionTypeSolver.setParent(reflectionTypeSolver);
 
         CombinedTypeSolver combinedSolver = new CombinedTypeSolver();
         combinedSolver.add(reflectionTypeSolver);
@@ -35,7 +39,17 @@ public class ResolveTypeInContext {
 
         FieldDeclaration fieldDeclaration = Navigator.findNodeOfGivenClass(cu, FieldDeclaration.class);
 
-        System.out.println("Field type: " + fieldDeclaration.getVariables().get(0).getType()
-                .resolve().asReferenceType().getQualifiedName());
+        Type type = fieldDeclaration.getVariables().get(0).getType();
+
+        if(type instanceof ClassOrInterfaceType) {
+            ClassOrInterfaceType classOrInterfaceType = type.asClassOrInterfaceType();
+            Optional<NodeList<Type>> typeArguments = classOrInterfaceType.getTypeArguments();
+
+            //list of arguments might have different length
+            typeArguments.ifPresent(types -> System.out.println(types.get(0).resolve().asReferenceType().getQualifiedName()));
+        }
+
+//        System.out.println("Field type: " +
+//                .resolve().asReferenceType().getQualifiedName());
     }
 }

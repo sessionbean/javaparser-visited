@@ -22,8 +22,8 @@ public class UsingTypeSolver {
     public static void main(String[] args) {
         TypeSolver typeSolver = new ReflectionTypeSolver();
 
-        showReferenceTypeDeclaration(typeSolver.solveType("java.lang.Object"));
+//        showReferenceTypeDeclaration(typeSolver.solveType("org.javaparser.examples.chapter5.Bar"));
         showReferenceTypeDeclaration(typeSolver.solveType("java.lang.String"));
-        showReferenceTypeDeclaration(typeSolver.solveType("java.util.List"));
+//        showReferenceTypeDeclaration(typeSolver.solveType("java.util.List"));
     }
 }
